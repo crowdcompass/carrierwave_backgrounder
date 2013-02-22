@@ -56,6 +56,10 @@ module Support
         ::QC.enqueue "#{worker.name}.perform", class_name, subject_id, mounted_as.to_s
       end
 
+      def enqueue_woodhouse(worker, class_name, subject_id, mounted_as)
+        Woodhouse.dispatch(worker.name, :perform_h, :class_name => class_name, :subject_id => subject_id, :mounted_as => mounted_as)
+      end
+
       def enqueue_immediate(worker, *args)
         worker.new(*args).perform
       end

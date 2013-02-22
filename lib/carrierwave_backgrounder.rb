@@ -21,6 +21,21 @@ module CarrierWave
           require 'sidekiq'
           include ::Sidekiq::Worker
         end
+      elsif @backend == :woodhouse
+        ::CarrierWave::Workers::ProcessAsset.class_eval do
+          include ::Woodhouse::Worker
+
+          def perform_h(job)
+            perform(job[:class_name], job[:subject_id], job[:mounted_as])
+          end
+        end
+        ::CarrierWave::Workers::StoreAsset.class_eval do
+          include ::Woodhouse::Worker
+
+          def perform_h(job)
+            perform(job[:class_name], job[:subject_id], job[:mounted_as])
+          end
+        end
       end
     end
 
